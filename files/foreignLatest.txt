@@ -1,4 +1,0 @@
-mkinitcpio-firmware
-neovim-plug
-nordvpn-bin
-swww
