@@ -5,10 +5,12 @@ loadkeys fr-latin1
 
 # Set font size
 set_font_size() {
-    echo "--- FOR BIGGER FONT SIZE TYPE 'yes' OTHERWISE PRESS 'RETURN'"
+    echo "--- FOR BIGGER FONT SIZE TYPE 'yes'"
+    echo "--- OTHERWISE JUST PRESS 'RETURN'"
     read -r answer
-    if [ "$answer" = "yes" ]; then
+    if [ ["$answer" = "yes"] || [ "$answer" = "YES" ] ]; then
         setfont ter-124b
+        echo
     else
         echo "No changes have been made"
     fi
@@ -21,7 +23,6 @@ set_font_size
 timedatectl
 
 # Edit Pacman configuration
-#vim /etc/pacman.conf
 editPac() {
     pFile=/etc/pacman.conf
     sed -i 's/#Color/Color/' $pFile
@@ -30,10 +31,6 @@ editPac() {
     sed -i '91s/#Include = \/etc\/pacman.d\/mirrorlist/Include = \/etc\/pacman.d\/mirrorlist/' $pFile
 }
 editPac
-
-# Refresh package databases
-pacman -Syy
-sleep 1s
 
 # Disk partitioning functions
 gdisk_partition() {
@@ -90,13 +87,16 @@ partition() {
     fdisk -l | grep "Disk" | grep "/dev/"
     echo "--- ENTER THE LAST 3 CHARACTERS OF THE DISK YOU WANNA USE"
     read -r disk
-
-    echo "--- FOR CUSTOM PARTITIONING TYPE 'c'"
-    echo "--- FOR AUTOMATED PARTITIONING TYPE 'a'"
+    echo
+    echo "--- FOR > CUSTOM PARTITIONING TYPE 'c'"
+    echo "--- FOR > AUTOMATED PARTITIONING TYPE 'a'"
+    echo
     read -r partAnswer
 
     if [ "$partAnswer" = "a" ]; then
-        echo "--- TYPE 'g' TO USE gdisk OR 'f' TO USE fdisk"
+        echo "--- TYPE 'g' TO USE gdisk"
+        echo "OR"
+        echo "--- TYPE 'f' TO USE fdisk"
         read -r gORf
         if [ "$gORf" = "g" ]; then
             gdisk_partition
@@ -144,29 +144,28 @@ mount /dev/"$disk"1 /mnt/boot
 # Refresh package databases and install base system
 reflector --country France,Germany --latest 5 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 pacman -Syy
-sleep 2s
 pacstrap -K /mnt base base-devel linux linux-firmware git nano neovim openssh reflector networkmanager iwd ufw rsync amd-ucode
 
 # Generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
 
-# Get the PARTUUID of /dev/vda2
+# Get the PARTUUID of ROOT
 #diskid=$(blkid | grep "$disk"2 | cut -d '"' -f14)
 #diskid=$(blkid | grep "$disk"2 | grep -o 'PARTUUID="[^"]*"' | cut -d '"' -f 2)
 diskid=$(blkid | grep "$disk"2 | grep -o 'PARTUUID="[^"]*"' | sed 's/PARTUUID="//;s/"//')
 
 # Edit local.gen
-editLocaleGen() {
-    sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
-}
+#editLocaleGen() {
+#    sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+#}
 
 pFile=/etc/pacman.conf
-
 
 # Create new user
 echo "ENTER NEW USER NAME"
 read -r userName
 
+#Password prompt
 promptPassword() {
     local password1 password2
     while true;do
@@ -189,21 +188,17 @@ export ROOTPASS="$rootPass"
 
 # Chroot and configure system
 arch-chroot /mnt << EOF
-pacman -Syyu
-sleep 1s
 
 ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
 hwclock --systohc --localtime
 
 reflector --country France,Germany --latest 5 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
-pacman -Syy
+pacman -Syyu
 
-    sed -i 's/#Color/Color/' $pFile
-    sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 8/' $pFile
-    sed -i 's/#\[multilib\]/\[multilib\]/' $pFile
-    sed -i '91s/#Include = \/etc\/pacman.d\/mirrorlist/Include = \/etc\/pacman.d\/mirrorlist/' $pFile
-
-editLocaleGen
+sed -i 's/#Color/Color/' $pFile
+sed -i 's/#ParallelDownloads = 5/ParallelDownloads = 8/' $pFile
+sed -i 's/#\[multilib\]/\[multilib\]/' $pFile
+sed -i '91s/#Include = \/etc\/pacman.d\/mirrorlist/Include = \/etc\/pacman.d\/mirrorlist/' $pFile
 
 sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 
@@ -234,8 +229,6 @@ linux   /vmlinuz-linux
 initrd  /initramfs-linux.img
 options root=PARTUUID=$diskid zswap.enabled=0 rootflags=subvol=@ rw rootfstype=btrfs
 EOT
-
-sleep 3s
 
 cat <<EOT >> /boot/loader/entries/arch-fallback.conf
 title   Arch Linux
