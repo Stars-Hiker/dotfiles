@@ -1,7 +1,7 @@
 #!/bin/env bash
 
 installAURpackages() {
-    paru -S --needed $(cat ~/git/dotfiles/files/foreignLatest.txt)
+    paru -S --needed $(cat ~/git/dotfiles/hyprPackages/foreignLatest.txt)
 }
 
 gitparu() {
@@ -26,7 +26,7 @@ installParu() {
 }
 
 installPackages(){
-    sudo pacman -Syu --needed $(cat ~/git/dotfiles/files/nativeLatest.txt)
+    sudo pacman -Syu --needed $(cat ~/git/dotfiles/hyprPackages/nativeLatest.txt)
     installParu
 }
 
