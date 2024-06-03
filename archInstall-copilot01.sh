@@ -226,6 +226,7 @@ EOT
 cat <<EOT >> /boot/loader/entries/arch.conf
 title   Arch Linux
 linux   /vmlinuz-linux
+initrd  /amd-ucode.img
 initrd  /initramfs-linux.img
 options root=PARTUUID=$diskid zswap.enabled=0 rootflags=subvol=@ rw rootfstype=btrfs
 EOT
@@ -233,6 +234,7 @@ EOT
 cat <<EOT >> /boot/loader/entries/arch-fallback.conf
 title   Arch Linux
 linux   /vmlinuz-linux
+initrd  /amd-ucode.img
 initrd  /initramfs-linux-fallback.img
 options root=PARTUUID=$diskid zswap.enabled=0 rootflags=subvol=@ rw rootfstype=btrfs
 EOT
