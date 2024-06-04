@@ -37,7 +37,7 @@ gdisk_partition() {
     gdisk /dev/$disk<<EOF
 c
 3
-ROOT
+ROOT3
 w
 Y
 EOF
@@ -48,7 +48,7 @@ fdisk /dev/$disk<<EOF
 x
 n
 3
-ROOT
+ROOT3
 r
 w
 EOF
@@ -116,7 +116,7 @@ mount /dev/"$disk"1 /mnt/boot
 # Refresh package databases and install base system
 reflector --country France,Germany --latest 5 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 pacman -Syy
-pacstrap -K /mnt base base-devel linux linux-firmware git nano neovim openssh reflector networkmanager iwd ufw rsync amd-ucode
+pacstrap -K /mnt base base-devel linux linux-firmware git nano neovim openssh reflector networkmanager iwd ufw rsync alacritty kitty zsh
 
 # Generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -188,7 +188,7 @@ EOT
 
 bootctl install
 
-cat <<EOT >> /boot/loader/entries/arch2.conf
+cat <<EOT >> /boot/loader/entries/archQtile.conf
 title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /amd-ucode.img
@@ -196,7 +196,7 @@ initrd  /initramfs-linux.img
 options root=PARTUUID=$diskid zswap.enabled=0 rootflags=subvol=@ rw rootfstype=btrfs
 EOT
 
-cat <<EOT >> /boot/loader/entries/arch2-fallback.conf
+cat <<EOT >> /boot/loader/entries/archQtile-fallback.conf
 title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /amd-ucode.img

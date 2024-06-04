@@ -8,7 +8,7 @@ set_font_size() {
     echo "--- FOR BIGGER FONT SIZE TYPE 'yes'"
     echo "--- OTHERWISE JUST PRESS 'RETURN'"
     read -r answer
-    if [ "$answer" = "yes" ]; then
+    if [ ["$answer" = "yes"] || [ "$answer" = "YES" ] ]; then
         setfont ter-124b
         echo
     else
@@ -35,23 +35,9 @@ editPac
 # Disk partitioning functions
 gdisk_partition() {
     gdisk /dev/$disk<<EOF
-o
-Y
-n
-
-
-+1G
-ef00
 c
-BOOT
-n
-
-
-
-
-c
-2
-ROOT
+4
+ROOT4
 w
 Y
 EOF
@@ -59,24 +45,10 @@ EOF
 
 fdisk_partition() {
 fdisk /dev/$disk<<EOF
-g
-n
-1
-
-+1G
-t
-1
-n
-
-
-
 x
 n
-1
-BOOT
-n
-2
-ROOT
+4
+ROOT4
 r
 w
 EOF
@@ -123,12 +95,12 @@ partition() {
 partition
 
 # Format partitions
-mkfs.vfat -F 32 -n BOOT /dev/"$disk"1
-mkfs.btrfs -f -L ROOT /dev/"$disk"2
+#mkfs.vfat -F 32 -n BOOT /dev/"$disk"1
+mkfs.btrfs -f /dev/"$disk"4
 
 
 # Create btrfs subvolumes
-mount /dev/"$disk"2 /mnt
+mount /dev/"$disk"4 /mnt
 cd /mnt
 btrfs subvolume create @
 btrfs subvolume create @home
@@ -136,15 +108,15 @@ cd
 umount /mnt
 
 # Mount subvolumes
-mount -o rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@ /dev/"$disk"2 /mnt
+mount -o rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@ /dev/"$disk"4 /mnt
 mkdir -p /mnt/{boot,home}
-mount -o rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@home /dev/"$disk"2 /mnt/home
+mount -o rw,noatime,compress=zstd:3,ssd,discard=async,space_cache=v2,subvol=@home /dev/"$disk"4 /mnt/home
 mount /dev/"$disk"1 /mnt/boot
 
 # Refresh package databases and install base system
 reflector --country France,Germany --latest 5 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 pacman -Syy
-pacstrap -K /mnt base base-devel linux linux-firmware git nano neovim openssh reflector networkmanager iwd ufw rsync amd-ucode alacritty kitty zsh
+pacstrap -K /mnt base base-devel linux linux-firmware git nano neovim openssh reflector networkmanager iwd ufw rsync alacritty kitty
 
 # Generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -152,7 +124,7 @@ genfstab -U /mnt >> /mnt/etc/fstab
 # Get the PARTUUID of ROOT
 #diskid=$(blkid | grep "$disk"2 | cut -d '"' -f14)
 #diskid=$(blkid | grep "$disk"2 | grep -o 'PARTUUID="[^"]*"' | cut -d '"' -f 2)
-diskid=$(blkid | grep "$disk"2 | grep -o 'PARTUUID="[^"]*"' | sed 's/PARTUUID="//;s/"//')
+diskid=$(blkid | grep "$disk"4 | grep -o 'PARTUUID="[^"]*"' | sed 's/PARTUUID="//;s/"//')
 
 # Edit local.gen
 #editLocaleGen() {
@@ -216,14 +188,7 @@ EOT
 
 bootctl install
 
-cat <<EOT >> /boot/loader/loader.conf
-default arch.conf
-timeout 3
-console-mode max
-editor 0
-EOT
-
-cat <<EOT >> /boot/loader/entries/arch-Hyprland.conf
+cat <<EOT >> /boot/loader/entries/archQtile-Wayland.conf
 title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /amd-ucode.img
@@ -231,7 +196,7 @@ initrd  /initramfs-linux.img
 options root=PARTUUID=$diskid zswap.enabled=0 rootflags=subvol=@ rw rootfstype=btrfs
 EOT
 
-cat <<EOT >> /boot/loader/entries/arch-Hyprland-fallback.conf
+cat <<EOT >> /boot/loader/entries/archQtileWayland-fallback.conf
 title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /amd-ucode.img
@@ -271,15 +236,10 @@ echo root:$ROOTPASS | chpasswd
 echo "Setting password for new user $userName..."
 echo $userName:$USERPASS | chpasswd
 
-
-gpasswd -a $userName nordvpn
-
 systemctl enable NetworkManager.service
 systemctl start NetworkManager.service
 systemctl enable sshd.service
 systemctl start sshd.service
-systemctl enable nordvpnd.service
-systemctl start nordvpnd.service
 
 echo "--- REMEMBER TO CHANGE ROOT AND USER PASSWD ---"
 
