@@ -36,4 +36,4 @@ sync() {
 }
 sync
 
-
+broot --install

@@ -8,7 +8,7 @@ set_font_size() {
     echo "--- FOR BIGGER FONT SIZE TYPE 'yes'"
     echo "--- OTHERWISE JUST PRESS 'RETURN'"
     read -r answer
-    if [ ["$answer" = "yes"] || [ "$answer" = "YES" ] ]; then
+    if [ "$answer" = "yes" ]; then
         setfont ter-124b
         echo
     else
@@ -271,10 +271,15 @@ echo root:$ROOTPASS | chpasswd
 echo "Setting password for new user $userName..."
 echo $userName:$USERPASS | chpasswd
 
+
+gpasswd -a $userName nordvpn
+
 systemctl enable NetworkManager.service
 systemctl start NetworkManager.service
 systemctl enable sshd.service
 systemctl start sshd.service
+systemctl enable nordvpnd.service
+systemctl start nordvpnd.service
 
 echo "--- REMEMBER TO CHANGE ROOT AND USER PASSWD ---"
 
