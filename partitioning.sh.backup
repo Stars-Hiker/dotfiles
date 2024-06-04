@@ -15,7 +15,9 @@ chooseDisk() {
 	read -r diskName
 	echo
     #Get the disk size
-    diskSize=$(lsblk | grep -w "$diskName" | awk '{ print $4 }' | sed s/G//)
+    #diskSize=$(lsblk | grep -w "$diskName" | awk '{ print $4 }' | sed s/G//)
+    diskSize=$(lsblk -b | grep -w "$diskName" | awk '{ print $4 }')
+    diskSize=$(echo "scale=2; $diskSize / (1024^3)" | bc)  # Convert size from bytes to gigabytes
     #echo $disksize
 	part
 }
