@@ -181,7 +181,6 @@ promptUser() {
 }
 promptUser
 
-
 # Prompt user for passwords outside the chroot environment
 promptRootPasswd() {
 echo "--- Enter password for root: "
@@ -306,8 +305,6 @@ vm.watermark_scale_factor = 125
 vm.page-cluster = 0
 EOT
 
-bootctl list
-
 groupadd nordvpn
 groupadd libvirt
 
@@ -318,12 +315,6 @@ echo "$userName ALL=(ALL) ALL" >> /etc/sudoers.d/00_$userName
 chmod 440 /etc/sudoers.d/*
 echo "User $userName has been added to sudoers."
 
-# Set root password
-echo "Setting root password..."
-
-# Set new user's password
-echo "Setting password for new user $userName..."
- 
 chpasswd <<EOT
 $userName:$USERPASS
 root:$ROOTPASS

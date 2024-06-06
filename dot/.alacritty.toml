@@ -1,0 +1,57 @@
+#import = [
+#    "~/.config/alacritty/themes/themes/github_dark_high_contrast.toml"
+#]
+
+#import = [
+#    "~/.config/alacritty/themes/themes/aura.toml"
+#]
+#import = [
+#    "~/.config/alacritty/themes/themes/gruvbox_dark.toml"
+#]
+
+import = [
+    "~/.config/alacritty/themes/themes/dracula_plus.toml"
+]
+
+#import = [
+#    "~/.config/alacritty/themes/themes/afterglow.toml"
+#]
+
+#import = [
+#    "~/.config/alacritty/themes/themes/ashes_dark.toml"
+#]
+
+
+[colors.primary]
+#background = '#212121'
+background = '#1C1C1C'
+foreground = '#F8F8F2'
+
+[window]
+
+#opacity = 0.97
+
+[font]
+#normal = { family = "Source Code Pro", style = "Regular" }
+#normal = { family = "monospace", style = "Regular" }
+#normal = { family = "NotoSerif Nerd Font Propo", style = "Regular" }
+#normal = { family = "Hack Nerd Font Mono" , style = "Regular" }
+#normal = { family = "SauceCodePro Nerd Font Mono", style = "Regular" }
+#normal = { family = "FiraMono Nerd Font Medium", style = "Medium" }
+#normal = { family = "GeistMono Nerd Font Mono", style = "Regular" }
+#normal = { family = "GeistMono NFM", style = "Regular" }
+#normal = { family = "Liberation Mono", style = "Bold" }
+#normal = { family = "CodeNewRoman Nerd Font Mono", style = "Italic" }
+#normal = { family = "ProFontWindows Nerd Font Mono", style = "Regular" }
+#normal = { family = "GeistMono Nerd Font Propo", style = "Regular" }
+#normal = { family = "Terminess Nerd Font Mono", style = "Bold" }
+#normal = { family = "WenQuanYi Zen Hei Mono", style = "Regular" }
+#normal = { family = "文泉驛等寬正黑", style = "Regular" }
+
+#normal = { family = "DejaVuSansM Nerd Font Mono", style = "Regular" }
+#normal = { family = "ProFont IIx Nerd Font Mono", style = "Regular" }
+normal = { family = "NotoSansM Nerd Font Mono", style = "Regular" }
+#normal = { family = "AurulentSansM Nerd Font Mono", style = "Regular" }
+#normal = { family = "AnonymicePro Nerd Font Mono", style = "Regular" }
+
+size = 12

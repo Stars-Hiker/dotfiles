@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Directory containing wallpapers
+WALLPAPER_DIR="/home/hiker/Wallpapers"
+
+# Start the swww daemon if it's not already running
+if ! pgrep -x "swww-daemon" > /dev/null; then
+    swww-daemon &
+    sleep 1  # Give the daemon a moment to start
+fi
+
+# Function to set a random wallpaper
+change_wallpaper() {
+    # Find all image files in the wallpaper directory
+    WALLPAPERS=($(find "$WALLPAPER_DIR" -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" \)))
+    
+    # Check if there are any wallpapers found
+    if [ ${#WALLPAPERS[@]} -eq 0 ]; then
+        echo "$(date): No wallpapers found in directory: $WALLPAPER_DIR" >> /tmp/change_wallpaper.log
+        exit 1
+    fi
+
+    # Select a random wallpaper
+    RANDOM_WALLPAPER=${WALLPAPERS[RANDOM % ${#WALLPAPERS[@]}]}
+    
+    # Log the selected wallpaper
+    echo "$(date): Changing to wallpaper: $RANDOM_WALLPAPER" >> /tmp/change_wallpaper.log
+
+    # Set the selected wallpaper and handle any errors
+    if ! swww img "$RANDOM_WALLPAPER"; then
+        echo "$(date): Failed to set wallpaper: $RANDOM_WALLPAPER" >> /tmp/change_wallpaper.log
+    fi
+}
+
+# Write the script's PID to a file
+echo $$ > /tmp/change_wallpaper_pid
+echo "$(date): Script started with PID: $$" >> /tmp/change_wallpaper.log
+
+# Trap USR1 signal to change wallpaper manually
+trap change_wallpaper SIGUSR1
+
+# Initial wallpaper change
+change_wallpaper
+
+# Infinite loop to change the wallpaper every 10 minutes
+while true; do
+    sleep 300  # 600 seconds = 10 minutes
+    change_wallpaper
+done
