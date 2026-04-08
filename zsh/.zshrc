@@ -14,6 +14,7 @@
 
 export HYPRSHOT_DIR="$HOME/ScreenShots/"
 export PATH="$HOME/.local/bin:$PATH"
+export GROFF_NO_SGR=1
 
 # Wayland
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
