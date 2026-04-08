@@ -1,0 +1,174 @@
+/* =============================================================================
+   Waybar — Thème sobre & efficace
+   Police recommandée : JetBrainsMono Nerd Font
+   ============================================================================= */
+
+* {
+    font-family: "JetBrainsMono Nerd Font", "Noto Sans Mono", monospace;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* -------------------------------------------------------------------------
+   Barre principale
+   ------------------------------------------------------------------------- */
+window#waybar {
+    background-color: rgba(15, 15, 20, 0.88);
+    color: #cdd6f4;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: background-color 0.3s ease;
+}
+
+/* -------------------------------------------------------------------------
+   Modules — espacement général
+   ------------------------------------------------------------------------- */
+.modules-left,
+.modules-center,
+.modules-right {
+    padding: 0 4px;
+}
+
+/* Chaque module */
+#workspaces,
+#window,
+#backlight,
+#pulseaudio,
+#network,
+#battery,
+#clock,
+#tray {
+    padding: 0 10px;
+    color: #cdd6f4;
+}
+
+/* -------------------------------------------------------------------------
+   Workspaces
+   ------------------------------------------------------------------------- */
+#workspaces {
+    padding: 0 4px;
+}
+
+#workspaces button {
+    padding: 0 7px;
+    color: #6c7086;
+    background: transparent;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    min-width: 24px;
+}
+
+#workspaces button:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: #cdd6f4;
+}
+
+#workspaces button.active {
+    color: #cba6f7;
+    background: rgba(203, 166, 247, 0.12);
+}
+
+#workspaces button.urgent {
+    color: #f38ba8;
+    background: rgba(243, 139, 168, 0.12);
+}
+
+/* -------------------------------------------------------------------------
+   Titre de fenêtre
+   ------------------------------------------------------------------------- */
+#window {
+    color: #a6adc8;
+    font-style: italic;
+}
+
+/* -------------------------------------------------------------------------
+   Séparateur visuel entre modules droits
+   ------------------------------------------------------------------------- */
+#backlight,
+#pulseaudio,
+#network,
+#battery {
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* -------------------------------------------------------------------------
+   Luminosité
+   ------------------------------------------------------------------------- */
+#backlight {
+    color: #f9e2af;
+}
+
+/* -------------------------------------------------------------------------
+   Volume
+   ------------------------------------------------------------------------- */
+#pulseaudio {
+    color: #89b4fa;
+}
+
+#pulseaudio.muted {
+    color: #585b70;
+}
+
+/* -------------------------------------------------------------------------
+   Réseau
+   ------------------------------------------------------------------------- */
+#network {
+    color: #a6e3a1;
+}
+
+#network.disconnected {
+    color: #f38ba8;
+}
+
+/* -------------------------------------------------------------------------
+   Batterie
+   ------------------------------------------------------------------------- */
+#battery {
+    color: #a6e3a1;
+}
+
+#battery.charging {
+    color: #a6e3a1;
+}
+
+#battery.warning:not(.charging) {
+    color: #f9e2af;
+}
+
+#battery.critical:not(.charging) {
+    color: #f38ba8;
+    animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0.4; }
+}
+
+/* -------------------------------------------------------------------------
+   Horloge
+   ------------------------------------------------------------------------- */
+#clock {
+    color: #cdd6f4;
+    font-weight: 600;
+}
+
+/* -------------------------------------------------------------------------
+   Systray
+   ------------------------------------------------------------------------- */
+#tray {
+    padding: 0 8px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    color: #f38ba8;
+}

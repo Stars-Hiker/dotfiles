@@ -1,0 +1,158 @@
+{
+    // -------------------------------------------------------------------------
+    // Barre principale — haut de l'écran
+    // -------------------------------------------------------------------------
+    "layer": "top",
+    "position": "top",
+    "height": 36,
+    "spacing": 4,
+    "margin-top": 6,
+    "margin-left": 12,
+    "margin-right": 12,
+
+    // -------------------------------------------------------------------------
+    // Modules — disposition
+    // -------------------------------------------------------------------------
+    "modules-left": [
+        "hyprland/workspaces"
+    ],
+    "modules-center": [
+        "hyprland/window"
+    ],
+    "modules-right": [
+        "backlight",
+        "pulseaudio",
+        "network",
+        "battery",
+        "clock",
+        "tray"
+    ],
+
+    // -------------------------------------------------------------------------
+    // Workspaces Hyprland
+    // -------------------------------------------------------------------------
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5",
+            "6": "6",
+            "7": "7",
+            "8": "8",
+            "9": "9",
+            "10": "10",
+            "urgent": "",
+            "focused": "",
+            "default": ""
+        },
+        "persistent-workspaces": {
+            "*": 5
+        },
+        "on-click": "activate",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+
+    // -------------------------------------------------------------------------
+    // Titre de la fenêtre active
+    // -------------------------------------------------------------------------
+    "hyprland/window": {
+        "format": "{}",
+        "max-length": 50,
+        "separate-outputs": true
+    },
+
+    // -------------------------------------------------------------------------
+    // Luminosité écran
+    // -------------------------------------------------------------------------
+    "backlight": {
+        "device": "intel_backlight",
+        "format": "{icon} {percent}%",
+        "format-icons": ["", "", "", "", "", "", "", "", ""],
+        "on-scroll-up": "brightnessctl s 5%+",
+        "on-scroll-down": "brightnessctl s 5%-",
+        "smooth-scrolling-threshold": 1
+    },
+
+    // -------------------------------------------------------------------------
+    // Volume (PulseAudio / PipeWire)
+    // -------------------------------------------------------------------------
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": "󰝟 muet",
+        "format-icons": {
+            "headphone": "󰋋",
+            "hands-free": "󰋎",
+            "headset": "󰋎",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["󰕿", "󰖀", "󰕾"]
+        },
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+",
+        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-",
+        "smooth-scrolling-threshold": 1
+    },
+
+    // -------------------------------------------------------------------------
+    // Réseau
+    // -------------------------------------------------------------------------
+    "network": {
+        "format-wifi": "󰤨 {essid}",
+        "format-ethernet": "󰈀 Ethernet",
+        "format-disconnected": "󰤭 Déconnecté",
+        "format-linked": "󰈀 {ifname} (no IP)",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%) — {ipaddr}",
+        "tooltip-format-ethernet": "{ifname} — {ipaddr}",
+        "on-click": "nm-connection-editor",
+        "interval": 5
+    },
+
+    // -------------------------------------------------------------------------
+    // Batterie
+    // -------------------------------------------------------------------------
+    "battery": {
+        "states": {
+            "good": 80,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": "󰂄 {capacity}%",
+        "format-plugged": "󰚥 {capacity}%",
+        "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+        "tooltip-format": "{timeTo} — {power:.1f}W",
+        "interval": 30
+    },
+
+    // -------------------------------------------------------------------------
+    // Horloge
+    // -------------------------------------------------------------------------
+    "clock": {
+        "format": "󰥔 {:%H:%M}",
+        "format-alt": "󰃭 {:%a %d %b}",
+        "tooltip-format": "<tt>{calendar}</tt>",
+        "calendar": {
+            "mode": "month",
+            "on-scroll": 1,
+            "format": {
+                "months": "<b>{}</b>",
+                "weekdays": "<span color='#888'>{}</span>",
+                "today": "<b><u>{}</u></b>"
+            }
+        },
+        "on-click-right": "hyprctl dispatch exec gnome-calendar"
+    },
+
+    // -------------------------------------------------------------------------
+    // Systray
+    // -------------------------------------------------------------------------
+    "tray": {
+        "spacing": 8,
+        "icon-size": 16
+    }
+}

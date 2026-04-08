@@ -1,0 +1,130 @@
+/* ~/.config/rofi/theme.rasi
+ * Theme accordé aux couleurs de hyprland.conf
+ * Violet foncé (#2b1d4b) + rose (#cc438b)
+ * Contrastes corrigés — couleurs explicites sur tous les états
+ */
+
+* {
+    bg:           #120d1e;
+    bg-alt:       #2b1d4b;
+    fg:           #f0e6ff;
+    fg-dim:       #9b8ab8;
+    fg-selected:  #ffffff;
+    accent:       #cc438b;
+    border-col:   #cc438b;
+    radius:       8px;
+
+    /* Reset global — évite tout héritage inattendu */
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    background-color: @bg;
+    border:           2px solid;
+    border-color:     @border-col;
+    border-radius:    @radius;
+    width:            520px;
+    padding:          14px;
+}
+
+mainbox {
+    background-color: transparent;
+    children:         [ inputbar, listview ];
+    spacing:          10px;
+}
+
+inputbar {
+    background-color: @bg-alt;
+    border-radius:    @radius;
+    padding:          10px 14px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color:       @accent;
+    padding:          0 8px 0 0;
+}
+
+entry {
+    background-color: transparent;
+    text-color:       @fg;
+    placeholder:      "Rechercher...";
+    placeholder-color: @fg-dim;
+}
+
+listview {
+    background-color: transparent;
+    lines:            8;
+    columns:          1;
+    spacing:          2px;
+    scrollbar:        false;
+    padding:          4px 0;
+}
+
+/* --- États normaux --- */
+element normal.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element normal.urgent {
+    background-color: transparent;
+    text-color:       @accent;
+}
+
+element normal.active {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+/* --- États alternés (lignes paires) --- */
+element alternate.normal {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+element alternate.urgent {
+    background-color: transparent;
+    text-color:       @accent;
+}
+
+element alternate.active {
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+/* --- États sélectionnés --- */
+element selected.normal {
+    background-color: @bg-alt;
+    text-color:       @fg-selected;
+    border:           0 0 0 3px;
+    border-color:     @accent;
+    border-radius:    6px;
+}
+
+element selected.urgent {
+    background-color: @bg-alt;
+    text-color:       @accent;
+    border-radius:    6px;
+}
+
+element selected.active {
+    background-color: @bg-alt;
+    text-color:       @fg-selected;
+    border-radius:    6px;
+}
+
+/* --- Icône et texte --- */
+element-icon {
+    background-color: transparent;
+    size:             22px;
+    vertical-align:   0.5;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       @fg;
+    vertical-align:   0.5;
+}

@@ -1,0 +1,21 @@
+/* ~/.config/rofi/config.rasi
+ * Rofi configuration — Wayland / Hyprland
+ * Doc: rofi -dump-config > ~/.config/rofi/config.rasi
+ */
+
+configuration {
+    modi:            "drun,window,run";
+    show-icons:      true;
+    icon-theme:      "Papirus";
+    font:            "JetBrainsMono Nerd Font 12";
+    drun-display-format: "{name}";
+    window-format:   "{w} · {c} · {t}";
+
+    /* Comportement */
+    click-to-exit:   true;
+    hover-select:    false;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+}
+
+@theme "~/.config/rofi/theme.rasi"
