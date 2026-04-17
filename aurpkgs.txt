@@ -1,0 +1,5 @@
+armbian-imager-bin 1.3.0-1
+netdiscover 0.21-0
+paru 2.1.0-2
+paru-debug 2.1.0-2
+wallust 3.4.0-1
