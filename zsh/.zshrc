@@ -265,7 +265,7 @@ alias gds="git diff --staged"
 # ══════════════════════════════════════════════════════════════════════════════
 
 # Auto eza after cd
-cd() { builtin cd "$@" && eza -la --icons --git --group-directories-first; }
+cd() { builtin cd "$@" && eza -ll --icons --git --group-directories-first; }
 
 # mkcd — make dir and cd into it
 mkcd() { mkdir -p "$1" && cd "$1"; }
