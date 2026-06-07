@@ -66,13 +66,11 @@ lazygit
 libpulse
 libreoffice-fresh
 libvirt
-linux
 linux-cachyos
 linux-cachyos-headers
 linux-cachyos-lts
 linux-cachyos-lts-headers
 linux-firmware
-linux-zen
 luarocks
 man-db
 man-pages
