@@ -6,6 +6,9 @@ of truth**: configs, the package lists, and (encrypted) secrets. The companion
 [`postInstall`](https://github.com/Stars-Hiker/postInstall) repo is the
 bootstrapper that consumes it on a fresh machine.
 
+> 📖 **New here or rebuilding a machine?** Read **[GUIDE.md](GUIDE.md)** — a
+> plain-language explanation of how the whole backup/recovery system works.
+
 ## Layout
 
 | Path | What |
