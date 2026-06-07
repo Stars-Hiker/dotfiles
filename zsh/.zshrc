@@ -435,9 +435,6 @@ ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=yellow'
 # to live here (appended by postInstall) was removed — it re-sourced every plugin
 # a second time and reset HISTSIZE 50000 → 10000. All of that is configured above.
 
-# OpenClaw completion
-_load "/home/nimrod/.openclaw/completions/openclaw.zsh"
-
 # ── NVM (lazy-loaded) ─────────────────────────────────────────────────────────
 # Sourcing nvm.sh eagerly cost ~510ms at startup (its auto-use runs `nvm use`
 # on every shell). These shims load nvm only on first use of node/npm/npx/nvm.

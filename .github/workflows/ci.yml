@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    name: Shellcheck + stow dry-run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install shellcheck + stow
+        run: sudo apt-get update && sudo apt-get install -y shellcheck stow
+
+      # SC1090/SC1091: dynamic source paths. SC2155: declare-and-assign style.
+      - name: shellcheck scripts
+        run: shellcheck -e SC1090,SC1091,SC2155 bin/*.sh install.sh
+
+      # Verify every stow package lays out cleanly into an empty target.
+      - name: stow dry-run
+        run: |
+          mkdir -p /tmp/fakehome
+          stow -nv --target=/tmp/fakehome bash hypr kitty nvim rofi waybar zsh

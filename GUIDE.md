@@ -254,5 +254,7 @@ there.
 
 **"Is my setup actually recoverable right now?"**
 The only true test is booting a fresh Arch/CachyOS VM (I have QEMU/KVM), running
-the Step 1–3 recovery, and confirming everything comes back. Worth doing once so
-I trust it before I ever need it for real.
+the Step 1–3 recovery, and confirming everything comes back. There's a full
+step-by-step runbook with a verification checklist in
+**[RECOVERY-TEST.md](RECOVERY-TEST.md)** — worth doing once so I trust it before I
+ever need it for real.
