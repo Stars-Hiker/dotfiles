@@ -13,6 +13,7 @@
 # ══════════════════════════════════════════════════════════════════════════════
 
 export HYPRSHOT_DIR="$HOME/ScreenShots/"
+typeset -U path PATH   # auto-dedupe PATH (survives `exec zsh`)
 export PATH="$HOME/.local/bin:$PATH"
 export GROFF_NO_SGR=1
 
@@ -61,7 +62,7 @@ setopt HIST_IGNORE_SPACE      # lines starting with space are not saved
 setopt HIST_REDUCE_BLANKS     # remove superfluous blanks
 setopt HIST_VERIFY            # show expanded history before running
 setopt EXTENDED_HISTORY       # save timestamp + duration
-setopt INC_APPEND_HISTORY     # write to history file immediately
+# (INC_APPEND_HISTORY omitted — SHARE_HISTORY already implies incremental append)
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  COMPLETION — modern & fast
@@ -80,11 +81,12 @@ fi
 unset _comp_cache
 
 # Completion behavior
-zstyle ':completion:*' menu select                          # arrow-key menu
+[[ -d ~/.zsh/cache ]] || mkdir -p ~/.zsh/cache              # ensure use-cache has a home
+zstyle ':completion:*' menu no                              # fzf-tab takes over the menu
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case-insensitive
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"    # colorize menu
 zstyle ':completion:*' group-name ''                        # group by category
-zstyle ':completion:*:descriptions' format '%F{yellow}── %d ──%f'
+zstyle ':completion:*:descriptions' format '[%d]'   # plain — fzf-tab shows %F codes literally
 zstyle ':completion:*:warnings' format '%F{red}no matches%f'
 zstyle ':completion:*' use-cache yes
 zstyle ':completion:*' cache-path ~/.zsh/cache
@@ -98,7 +100,7 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 setopt AUTO_CD              # type a dir name to cd into it
 setopt AUTO_PUSHD           # cd pushes to the directory stack
 setopt PUSHD_IGNORE_DUPS    # no duplicate dirs in stack
-setopt CORRECT              # suggest corrections for commands
+# CORRECT disabled — it second-guesses valid commands; re-enable if you want it
 setopt INTERACTIVE_COMMENTS # allow # comments in interactive shell
 setopt GLOB_DOTS            # include hidden files in globs
 setopt EXTENDED_GLOB        # extended globbing patterns
@@ -110,14 +112,36 @@ setopt NO_BEEP              # silence
 
 autoload -Uz vcs_info
 zstyle ':vcs_info:*' enable git
-zstyle ':vcs_info:git:*' formats '%F{green}%b%f '
 zstyle ':vcs_info:git:*' actionformats '%F{yellow}%b|%a%f '  # shows rebase/merge state
 
 # Show untracked / staged indicators
 zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' stagedstr '%F{green}●%f'
 zstyle ':vcs_info:git:*' unstagedstr '%F{red}●%f'
-zstyle ':vcs_info:git:*' formats '%F{green}%b%f %c%u'
+zstyle ':vcs_info:git:*' formats '%F{green}%b%f %c%u%m'   # %m = ahead/behind + stash (below)
+
+# Append untracked-file dot, ↑ahead / ↓behind vs upstream, and ⚑ stash via hooks
+zstyle ':vcs_info:git*+set-message:*' hooks git-untracked git-aheadbehind git-stash
+
++vi-git-untracked() {
+  # vcs_info's %c/%u cover staged + modified-tracked, but NOT new untracked files
+  [[ -n $(git ls-files --others --exclude-standard 2>/dev/null) ]] && \
+    hook_com[unstaged]+="%F{244}●%f"   # dim dot = untracked present
+  return 0
+}
+
++vi-git-aheadbehind() {
+  local ab; ab=$(git rev-list --left-right --count @{upstream}...HEAD 2>/dev/null) || return 0
+  local behind=${ab%%[[:space:]]*} ahead=${ab##*[[:space:]]}
+  (( ahead ))  && hook_com[misc]+=" %F{cyan}↑${ahead}%f"
+  (( behind )) && hook_com[misc]+=" %F{red}↓${behind}%f"
+  return 0   # never abort the hook chain (vcs_info stops on non-zero)
+}
++vi-git-stash() {
+  local n; n=$(git rev-list --walk-reflogs --count refs/stash 2>/dev/null)
+  (( n )) && hook_com[misc]+=" %F{magenta}⚑${n}%f"
+  return 0
+}
 
 precmd() { vcs_info }
 setopt PROMPT_SUBST
@@ -136,7 +160,8 @@ RPROMPT='%(?..%F{red}✘ %?%f)%(1j. %F{cyan}⚙ %j%f.)'
 
 bindkey -e   # emacs key bindings (Ctrl-A/E, Ctrl-R, etc.)
 
-# History substring search (set after plugin load below)
+# History substring search (widgets are defined when the plugin loads below;
+# these bindings resolve once that happens in the same startup)
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
 bindkey '^P'   history-substring-search-up
@@ -164,8 +189,8 @@ alias .....="cd ../../../.."
 alias ls="eza --icons --group-directories-first"
 alias ll="eza -l --icons --git --group-directories-first"
 alias la="eza -la --icons --git --group-directories-first"
-alias lt="eza --tree --icons --level=2 --group-directories-first"
-alias lta="eza --tree --icons --level=3 --git --group-directories-first"
+alias lt="eza --tree --icons --level=2 --git --group-directories-first"
+alias ltt="eza --tree --icons --level=3 --git --group-directories-first"
 
 # ── Modern replacements ───────────────────────────────────────────────────────
 alias cat="bat --paging=never"
@@ -173,8 +198,8 @@ alias grep="grep --color=auto"
 alias diff="diff --color=auto"
 alias ip="ip -c"
 alias ping="ping -c4"
-alias ssh="kitty +kitten ssh"
-alias fm="yazi"
+alias ssh="kitty + kitten ssh"
+alias fm=y                                    # y() wrapper (see FUNCTIONS): cd's on quit
 alias du="dust"        # dust (modern du) — install: sudo pacman -S dust
 alias df="duf"         # duf  (modern df) — install: sudo pacman -S duf
 alias top="btop"       # btop (modern top) — install: sudo pacman -S btop
@@ -192,7 +217,13 @@ alias pacr="sudo pacman -Rns"                 # remove + orphan deps
 alias pacs="pacman -Ss"                       # search
 alias paci="pacman -Qi"                       # package info
 alias paclo="pacman -Qdt"                     # list orphans
-alias paclean="sudo pacman -Rns $(pacman -Qtdq 2>/dev/null)" # remove orphans
+# paclean is a function (see FUNCTIONS) — an alias would freeze the orphan
+# list at shell-startup time instead of evaluating it when you run it.
+
+# ── Dotfiles / system snapshot ──────────────────────────────────────────────────
+alias dotsync="$HOME/.dotfiles/bin/sync.sh"          # refresh pkg lists, commit & push dotfiles
+alias pkgsnap="$HOME/.dotfiles/bin/pkg-snapshot.sh"  # regenerate package lists only
+alias dots="cd $HOME/.dotfiles && git status -sb"    # jump to dotfiles + show status
 
 # ── Systemctl ─────────────────────────────────────────────────────────────────
 alias syss="sudo systemctl start"
@@ -208,6 +239,11 @@ alias rm="rm -i"
 alias cp="cp -i"
 alias mv="mv -i"
 alias mkdir="mkdir -pv"
+
+# ── Global aliases (expand anywhere on the line) ──────────────────────────────
+alias -g NUL='>/dev/null 2>&1'   # e.g. `cmd NUL`
+alias -g G='| grep -i'           # e.g. `ls G foo`
+alias -g L='| less'
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  GIT ALIASES
@@ -270,14 +306,24 @@ cd() { builtin cd "$@" && eza -ll --icons --git --group-directories-first; }
 # mkcd — make dir and cd into it
 mkcd() { mkdir -p "$1" && cd "$1"; }
 
-# fzf-powered history search (Ctrl+R replacement)
-fzf-history() {
-  local cmd
-  cmd=$(fc -ln 1 | awk '!seen[$0]++' | fzf --tac --no-sort --prompt="history ❯ ")
-  [[ -n "$cmd" ]] && print -z "$cmd"
+# yazi wrapper — cd into wherever you browsed when you quit (uses the eza-listing cd above)
+y() {
+  local tmp cwd; tmp=$(mktemp -t yazi-cwd.XXXXXX)
+  yazi "$@" --cwd-file="$tmp"
+  IFS= read -r -d '' cwd < "$tmp"
+  [[ -n "$cwd" && "$cwd" != "$PWD" ]] && cd -- "$cwd"
+  rm -f -- "$tmp"
 }
-zle -N fzf-history
-bindkey '^R' fzf-history
+
+# paclean — remove orphaned packages (evaluated at call time, not at startup)
+paclean() {
+  local orphans=$(pacman -Qtdq)
+  [[ -z "$orphans" ]] && { echo "no orphans to remove"; return 0; }
+  sudo pacman -Rns $orphans
+}
+
+# Note: Ctrl-R is handled by fzf's key-bindings.zsh (sourced below). A custom
+# fzf-history widget here would be clobbered by that source, so it's omitted.
 
 # fzf cd — fuzzy jump to any subdirectory
 fcd() {
@@ -312,7 +358,11 @@ extract() {
 note() {
   local notes_dir="$HOME/notes"
   mkdir -p "$notes_dir"
-  [[ -z "$1" ]] && nvim "$notes_dir/$(date +%Y-%m-%d).md" || echo "$*" >> "$notes_dir/$(date +%Y-%m-%d).md"
+  if [[ -z "$1" ]]; then
+    nvim "$notes_dir/$(date +%Y-%m-%d).md"
+  else
+    echo "$*" >> "$notes_dir/$(date +%Y-%m-%d).md"
+  fi
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -343,9 +393,20 @@ fi
 
 _load() { [[ -f "$1" ]] && source "$1"; }
 
+# fzf-tab must load AFTER compinit + completion zstyles (above) and BEFORE the
+# widget-wrapping plugins below. Syntax-highlighting stays near-last; history-
+# substring-search after it.
+_load "${HOME}/AUR/fzf-tab/fzf-tab.plugin.zsh"
 _load "${HOME}/AUR/zsh-autosuggestions/zsh-autosuggestions.zsh"
 _load "${HOME}/AUR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 _load "${HOME}/AUR/zsh-history-substring-search/zsh-history-substring-search.zsh"
+
+# fzf-tab — fzf-powered completion menu with previews (inherits FZF_DEFAULT_OPTS theme)
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+zstyle ':fzf-tab:*' switch-group ',' '.'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always --icons $realpath'
+zstyle ':fzf-tab:complete:*:*' fzf-preview \
+  'bat --color=always $realpath 2>/dev/null || eza -1 --color=always --icons $realpath'
 
 # Autosuggestions tuning
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)  # try history first, then completion
@@ -367,3 +428,26 @@ ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=yellow'
 
 # ── End profiling (uncomment if zmodload above is uncommented) ────────────────
 # zprof
+# ══════════════════════════════════════════════════════════════════════════════
+#  COMPLETIONS & TOOL INTEGRATIONS
+# ══════════════════════════════════════════════════════════════════════════════
+# NOTE: the duplicate Wayland/aliases/history/keybindings/plugins block that used
+# to live here (appended by postInstall) was removed — it re-sourced every plugin
+# a second time and reset HISTSIZE 50000 → 10000. All of that is configured above.
+
+# OpenClaw completion
+_load "/home/nimrod/.openclaw/completions/openclaw.zsh"
+
+# ── NVM (lazy-loaded) ─────────────────────────────────────────────────────────
+# Sourcing nvm.sh eagerly cost ~510ms at startup (its auto-use runs `nvm use`
+# on every shell). These shims load nvm only on first use of node/npm/npx/nvm.
+export NVM_DIR="$HOME/.nvm"
+_load_nvm() {
+  unset -f nvm node npm npx 2>/dev/null
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+}
+nvm()  { _load_nvm; nvm "$@"; }
+node() { _load_nvm; node "$@"; }
+npm()  { _load_nvm; npm "$@"; }
+npx()  { _load_nvm; npx "$@"; }

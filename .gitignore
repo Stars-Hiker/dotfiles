@@ -1,0 +1,23 @@
+# Shell histories — churn constantly and can leak secrets pasted on the CLI
+*_history
+.bash_history
+.zsh_history
+
+# Compiled / generated shell artifacts (regenerated automatically)
+*.zwc
+.zcompdump*
+
+# Editor / runtime junk
+*.swp
+*.swo
+*~
+__pycache__/
+.DS_Store
+
+# age secret identity — the private key must NEVER be committed.
+# (It lives in ~/.config/age/keys.txt, backed up to Bitwarden + USB.)
+keys.txt
+*.key
+
+# NOTE: nvim/.config/nvim/lazy-lock.json is intentionally tracked — it pins
+# plugin versions for reproducible Neovim installs. Do not ignore it.
