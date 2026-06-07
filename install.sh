@@ -20,6 +20,17 @@ command -v stow >/dev/null 2>&1 || {
 BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d-%H%M%S)"
 backed_up=0
 
+# already_deployed <relpath> — true if the target is a symlink, or resolves
+# (through an already-symlinked parent) into the dotfiles repo. Such a path is
+# NOT a conflict and must never be backed up — doing so would `mv` our own repo
+# files out through the symlink. This makes re-runs safe/idempotent.
+already_deployed() {
+    local target="$HOME/$1" real
+    [[ -L "$target" ]] && return 0
+    real="$(realpath -m "$target" 2>/dev/null)" || return 1
+    [[ "$real" == "$DOTFILES_DIR"/* ]]
+}
+
 backup_target() {                       # $1 = path relative to $HOME
     local rel="$1" target="$HOME/$1"
     mkdir -p "$(dirname "$BACKUP_DIR/$rel")"
@@ -53,25 +64,25 @@ for pkg in "${PACKAGES[@]}"; do
     while IFS= read -r -d '' d; do
         rel="${d#"$pkg"/}"
         [[ "${dircount["$rel"]:-0}" -eq 1 ]] || continue   # not unique → shared, keep
+        already_deployed "$rel" && continue                # already linked → leave
         parent="$(dirname "$rel")"
         # link root = parent is $HOME ('.') or a dir shared by other packages
         if [[ "$parent" == "." || "${dircount["$parent"]:-0}" -ge 2 ]]; then
-            target="$HOME/$rel"
-            [[ -d "$target" && ! -L "$target" ]] && backup_target "$rel"
+            [[ -d "$HOME/$rel" ]] && backup_target "$rel"
         fi
     done < <(find "$pkg" -mindepth 1 -type d -print0)
 done
 
 # ── Pass 2: move aside any remaining conflicting REAL files ───────────────────
 # /etc/skel copies (~/.bashrc, ~/.zshrc, …) and stray files in shared dirs.
-# Files under a directory already backed up in Pass 1 are gone, so they're
-# naturally skipped here.
+# already_deployed() skips anything that already resolves into the repo, so
+# re-running this script never cannibalises our own files.
 for pkg in "${PACKAGES[@]}"; do
     [[ -d "$pkg" ]] || { echo "skip: package '$pkg' not found"; continue; }
     while IFS= read -r -d '' f; do
         rel="${f#"$pkg"/}"
-        target="$HOME/$rel"
-        [[ -e "$target" && ! -L "$target" ]] && backup_target "$rel"
+        already_deployed "$rel" && continue
+        [[ -e "$HOME/$rel" ]] && backup_target "$rel"
     done < <(find "$pkg" -type f -print0)
 done
 
