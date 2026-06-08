@@ -1,0 +1,5 @@
+# Curated AUR packages that the auto-snapshot can't capture as foreign because
+# they're installed from a third-party repo (e.g. BlackArch) on the source
+# machine. install_from_pkglists installs these via paru. Not auto-generated —
+# edit by hand. One package name per line; '#' comments allowed.
+netdiscover

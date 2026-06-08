@@ -16,8 +16,15 @@ DOTFILES_DIR="$(dirname "$(dirname "$(realpath "$0")")")"
 PKGLISTS_DIR="$DOTFILES_DIR/pkglists"
 mkdir -p "$PKGLISTS_DIR"
 
-LC_ALL=C pacman -Qqen | sort > "$PKGLISTS_DIR/pkgs-native.txt"
-LC_ALL=C pacman -Qqem | sort > "$PKGLISTS_DIR/pkgs-aur.txt"
+# Exclude packages that can't be reinstalled cleanly on a fresh machine:
+#   *-debug              auto-generated debug-symbol packages (e.g. paru-debug)
+#   blackarch-mirrorlist needs the BlackArch repo, which a recovery doesn't have
+#   netdiscover          on this host it comes from BlackArch; recovery gets it
+#                        from the AUR instead (see pkglists/pkgs-aur-extra.txt)
+EXCLUDE_RE='(-debug$|^blackarch-mirrorlist$|^netdiscover$)'
+
+LC_ALL=C pacman -Qqen | grep -vE "$EXCLUDE_RE" | sort > "$PKGLISTS_DIR/pkgs-native.txt"
+LC_ALL=C pacman -Qqem | grep -vE "$EXCLUDE_RE" | sort > "$PKGLISTS_DIR/pkgs-aur.txt"
 
 # When invoked by the pacman hook we run as root — hand the files back to the
 # user who owns the dotfiles tree so `git` and editing keep working.

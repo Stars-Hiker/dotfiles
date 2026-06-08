@@ -9,7 +9,6 @@ base-devel
 bat
 bind
 bitwarden
-blackarch-mirrorlist
 bluez
 bluez-utils
 brightnessctl
@@ -78,7 +77,6 @@ mariadb
 mpv
 nano
 neovim
-netdiscover
 networkmanager
 network-manager-applet
 nikto

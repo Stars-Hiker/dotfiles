@@ -5,7 +5,6 @@ cachyos-v3-mirrorlist
 claude-cowork-service
 claude-desktop-bin
 opencode-bin
-paru-debug
 visual-studio-code-bin
 wallust
 zen-browser-bin
