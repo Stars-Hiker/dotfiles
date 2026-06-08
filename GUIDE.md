@@ -59,7 +59,7 @@ is *the robot that reads the blueprint and builds it*.
 
 ```
 ~/.dotfiles/
-├── bash/ hypr/ kitty/ nvim/ rofi/ waybar/ zsh/   ← the actual config files
+├── bash/ btop/ git/ hypr/ kitty/ nvim/ paru/ rofi/ waybar/ zsh/  ← config files
 │                                                    (one folder per "stow package")
 ├── pkglists/
 │   ├── pkgs-native.txt   ← every official package I installed (pacman)
@@ -216,6 +216,8 @@ If I lose this key, the encrypted secrets become permanently unrecoverable
 # ── Everyday ──────────────────────────────────────────────
 dotsync                              # save current state to GitHub
 dots                                 # cd ~/.dotfiles + git status
+make -C ~/.dotfiles help             # list all make targets
+make -C ~/.dotfiles doctor           # health-check this machine (no sudo)
 
 # ── Secrets ───────────────────────────────────────────────
 ~/.dotfiles/bin/secrets-seal.sh      # re-encrypt secrets, then: dotsync

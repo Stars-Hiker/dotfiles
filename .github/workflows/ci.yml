@@ -22,4 +22,4 @@ jobs:
       - name: stow dry-run
         run: |
           mkdir -p /tmp/fakehome
-          stow -nv --target=/tmp/fakehome bash hypr kitty nvim rofi waybar zsh
+          stow -nv --target=/tmp/fakehome bash btop git hypr kitty nvim paru rofi waybar zsh
