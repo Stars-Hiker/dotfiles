@@ -13,7 +13,7 @@ bootstrapper that consumes it on a fresh machine.
 
 | Path | What |
 |------|------|
-| `bash/ hypr/ kitty/ nvim/ rofi/ waybar/ zsh/` | Stow packages (mirror their place under `$HOME`) |
+| `bash/ btop/ git/ hypr/ kitty/ nvim/ paru/ rofi/ waybar/ zsh/` | Stow packages (mirror their place under `$HOME`) |
 | `pkglists/pkgs-native.txt` | Explicit repo packages (`pacman -Qqen`) — **source of truth** |
 | `pkglists/pkgs-aur.txt` | Explicit AUR/foreign packages (`pacman -Qqem`) |
 | `secrets/secrets.tar.age` | SSH keys etc., encrypted with `age` (safe to commit) |

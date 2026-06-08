@@ -10,7 +10,7 @@ cd "$(dirname "$(realpath "$0")")"
 DOTFILES_DIR="$PWD"
 
 # Stow packages (each is a top-level dir mirroring its place under $HOME).
-PACKAGES=(bash hypr kitty nvim rofi waybar zsh)
+PACKAGES=(bash btop git hypr kitty nvim paru rofi waybar zsh)
 
 command -v stow >/dev/null 2>&1 || {
     echo "ERROR: 'stow' is not installed. Install it first: sudo pacman -S stow" >&2

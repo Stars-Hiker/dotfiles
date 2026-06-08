@@ -59,7 +59,7 @@ is *the robot that reads the blueprint and builds it*.
 
 ```
 ~/.dotfiles/
-├── bash/ hypr/ kitty/ nvim/ rofi/ waybar/ zsh/   ← the actual config files
+├── bash/ btop/ git/ hypr/ kitty/ nvim/ paru/ rofi/ waybar/ zsh/  ← config files
 │                                                    (one folder per "stow package")
 ├── pkglists/
 │   ├── pkgs-native.txt   ← every official package I installed (pacman)
