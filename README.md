@@ -9,6 +9,20 @@ bootstrapper that consumes it on a fresh machine.
 > 📖 **New here or rebuilding a machine?** Read **[GUIDE.md](GUIDE.md)** — a
 > plain-language explanation of how the whole backup/recovery system works.
 
+## Quickstart (`make`)
+
+```sh
+make help      # list every target
+make install   # stow all config packages into $HOME (idempotent)
+make sync      # snapshot pkglists, commit & push      (= dotsync)
+make doctor    # SUDO-FREE health check: is this machine recoverable?
+make seal      # re-encrypt secrets; `make unseal` restores them
+```
+
+The `dotsync` / `dots` / `pkgsnap` aliases still work — `make` is just a
+discoverable front door. To rebuild a whole machine from scratch, see
+[`postInstall`](https://github.com/Stars-Hiker/postInstall).
+
 ## Layout
 
 | Path | What |
@@ -18,8 +32,9 @@ bootstrapper that consumes it on a fresh machine.
 | `pkglists/pkgs-aur.txt` | Explicit AUR/foreign packages (`pacman -Qqem`) |
 | `secrets/secrets.tar.age` | SSH keys etc., encrypted with `age` (safe to commit) |
 | `secrets/recipient.txt` | Public age key (safe to commit) |
-| `bin/` | `install.sh` helpers: snapshot / sync / seal / unseal |
+| `bin/` | helpers: snapshot / sync / seal / unseal / **doctor** (health check) |
 | `install.sh` | Deploys all stow packages into `$HOME` |
+| `Makefile` | Discoverable entrypoints (`make help`) wrapping the scripts above |
 
 ---
 

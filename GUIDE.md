@@ -216,6 +216,8 @@ If I lose this key, the encrypted secrets become permanently unrecoverable
 # ── Everyday ──────────────────────────────────────────────
 dotsync                              # save current state to GitHub
 dots                                 # cd ~/.dotfiles + git status
+make -C ~/.dotfiles help             # list all make targets
+make -C ~/.dotfiles doctor           # health-check this machine (no sudo)
 
 # ── Secrets ───────────────────────────────────────────────
 ~/.dotfiles/bin/secrets-seal.sh      # re-encrypt secrets, then: dotsync
